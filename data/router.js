@@ -4,11 +4,35 @@ const Hubs = require("./db.js");
 
 const router = express.Router();
 
+//1
+router.post("/", (req, res) => {
+  Hubs.insert(req.body)
+    .then((hub) => {
+      res.status(201).json(hub);
+    })
+    .catch((error) => {
+      res.status(400).json({
+        message: "Please provide title and contents for the post.",
+      });
+    });
+});
+
+//2
+router.post("/:id/comments", (req, res) => {
+  Hubs.insertComment(req.body)
+    .then((comment) => {
+      res.status(201).json(comment);
+    })
+    .catch((err) => {
+      res.status(500).json({ errorMessage: "error adding messages" });
+    });
+});
+
 //3
 router.get("/", (req, res) => {
-  Hubs.find(req.query)
+  Hubs.find()
     .then((hubs) => {
-      res.status(200).json({ queryString: req.query, hubs });
+      res.status(200).json(hubs);
     })
     .catch((error) => {
       console.log(error);
@@ -36,16 +60,14 @@ router.get("/:id", (req, res) => {
     });
 });
 
-//1
-router.post("/", (req, res) => {
-  Hubs.insert(req.body)
-    .then((hub) => {
-      res.status(201).json(hub);
+//5
+router.get("/:id/comments", (req, res) => {
+  Hubs.findPostComments(req.params.id)
+    .then((comment) => {
+      res.status(200).json(comment);
     })
-    .catch((error) => {
-      res.status(500).json({
-        message: "Error adding the post",
-      });
+    .catch((err) => {
+      res.status(500).json({ errorMessage: "error reading comments" });
     });
 });
 
@@ -98,17 +120,6 @@ router.put("/:id", (req, res) => {
     });
 });
 
-//5
-router.get("/:id/comments", (req, res) => {
-  Hubs.findPostComments(req.params.id)
-    .then((comment) => {
-      res.status(200).json(comment);
-    })
-    .catch((err) => {
-      res.status(500).json({ errorMessage: "error reading comments" });
-    });
-});
-
 //8
 router.get("/comments/:id", (req, res) => {
     Hubs.findCommentById(req.params.id)
@@ -119,16 +130,5 @@ router.get("/comments/:id", (req, res) => {
         res.status(500).json({ errorMessage: "error reading comments" });
       });
   });
-
-//2
-router.post("/:id/comments", (req, res) => {
-  Hubs.insertComment(req.body)
-    .then((comment) => {
-      res.status(201).json(comment);
-    })
-    .catch((err) => {
-      res.status(500).json({ errorMessage: "error adding messages" });
-    });
-});
 
 module.exports = router;

@@ -11,8 +11,6 @@ server.use(cors());
 
 server.use("/api/posts", postsRouter); // <--------=============
 
-// test it by making a GET request to localhost:4000/api/hubs
-
 server.get("/", (req, res) => {
   res.send(`
     <h2>Lambda Hubs API</h>
